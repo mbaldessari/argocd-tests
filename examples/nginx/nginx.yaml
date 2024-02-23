@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:latest
+        image: registry.access.redhat.com/ubi9/nginx-120:latest
         ports:
         - containerPort: 80
