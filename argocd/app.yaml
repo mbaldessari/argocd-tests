@@ -7,7 +7,7 @@ spec:
     namespace: argocd
     server: 'https://kubernetes.default.svc'
   source:
-    path: examples/nginx
+    path: examples/hello-world
     repoURL: 'https://github.com/mbaldessari/argocd-tests.git'
     targetRevision: main
   project: default
