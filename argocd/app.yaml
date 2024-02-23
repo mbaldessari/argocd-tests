@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nginx-test-application
+  name: hello-test-application
 spec:
   destination:
     namespace: argocd
