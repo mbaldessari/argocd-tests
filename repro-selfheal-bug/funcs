@@ -1,0 +1,27 @@
+wait_for_pods() {
+  TIMEOUT=300 # 5 minutes
+  INTERVAL=5
+  ELAPSED=0
+
+  echo "Waiting for all pods in the cluster to be healthy..."
+
+  while true; do
+    # Count pods that are NOT Running or Succeeded
+    # We exclude "Succeeded" because Jobs/CronJobs finish and are considered healthy.
+    UNHEALTHY_PODS=$(kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded --no-headers 2>/dev/null | grep -v openshift-kube- | wc -l)
+
+    if [ "$UNHEALTHY_PODS" -eq 0 ]; then
+      break
+    fi
+
+    if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
+      echo "Error: Timeout reached. Some pods are still unhealthy."
+      kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded
+      exit 1
+    fi
+
+    echo "Still waiting... ($UNHEALTHY_PODS pods not yet ready)"
+    sleep $INTERVAL
+    ((ELAPSED+=INTERVAL))
+  done
+}
