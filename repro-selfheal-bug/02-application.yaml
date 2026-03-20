@@ -14,7 +14,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: selfheal-bug-repro
-  namespace: argocd
+  namespace: openshift-gitops
 spec:
   project: default
   source:
@@ -23,7 +23,7 @@ spec:
     targetRevision: HEAD
     path: repro-selfheal-bug/01-app-manifests
   destination:
-    server: https://kubernetes.in-cluster
+    server: https://kubernetes.default.svc
     # Note: the actual namespace is set in the manifests themselves (transient-ns)
   syncPolicy:
     automated:
