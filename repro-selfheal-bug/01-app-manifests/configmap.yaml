@@ -1,0 +1,12 @@
+# This ConfigMap is deployed into "transient-ns" namespace.
+# To trigger the bug, do NOT create the namespace before the first sync.
+# ArgoCD will fail to sync because the namespace doesn't exist.
+# Then create the namespace — with the bug, ArgoCD never retries even
+# though selfHeal is enabled.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-config
+  namespace: transient-ns
+data:
+  key: value

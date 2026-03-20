@@ -1,0 +1,7 @@
+# Apply this AFTER the first sync has failed, to simulate the
+# transient issue being resolved.
+#   kubectl apply -f 03-create-namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: transient-ns
