@@ -18,5 +18,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    retry:
-      limit: 0  # no retry policy — we rely solely on selfHeal
+    # retry:
+    #  limit: 0  # no retry policy — we rely solely on selfHeal
