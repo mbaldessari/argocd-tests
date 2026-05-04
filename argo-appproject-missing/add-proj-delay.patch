@@ -1,0 +1,23 @@
+diff --git a/controller/appcontroller.go b/controller/appcontroller.go
+index d20ed1ae1..1f8e2b8e5 100644
+--- a/controller/appcontroller.go
++++ b/controller/appcontroller.go
+@@ -3,6 +3,7 @@ package controller
+ import (
+ 	"context"
+ 	"fmt"
++	"time"
+ 	"math"
+ 	"sort"
+ 	"strconv"
+@@ -914,6 +915,10 @@ func (ctrl *ApplicationController) Run(ctx context.Context, statusProcessors in
+ 	}
+
+ 	go ctrl.appInformer.Run(ctx.Done())
++
++	// HACK: Add delay to projInformer startup to make race condition more likely
++	// This patch is ONLY for reproducing the race!! :)
++	time.Sleep(200 * time.Millisecond)
+ 	go ctrl.projInformer.Run(ctx.Done())
+ 	go ctrl.appLister.Run(ctx.Done())
+ 	go ctrl.projLister.Run(ctx.Done())

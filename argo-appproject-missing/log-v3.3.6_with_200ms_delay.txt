@@ -1,0 +1,90 @@
+=== ArgoCD Race Condition Reproducer ===
+Namespace: argocd
+Project: race-test-project
+Apps: 5 (race-test-app-1 to race-test-app-5)
+Max attempts: 10
+
+Starting race condition reproduction...
+
+Cleanup complete
+
+=== Attempt 1/10 ===
+Creating AppProject 'race-test-project'...
+appproject.argoproj.io/race-test-project unchanged
+Creating 5 Applications referencing project 'race-test-project'...
+application.argoproj.io/race-test-app-1 unchanged
+application.argoproj.io/race-test-app-2 unchanged
+application.argoproj.io/race-test-app-3 unchanged
+application.argoproj.io/race-test-app-4 unchanged
+application.argoproj.io/race-test-app-5 unchanged
+Applications created
+
+Restarting ArgoCD application controller to trigger startup race...
+pod "argocd-application-controller-0" deleted
+Waiting for controller to be ready...
+pod/argocd-application-controller-0 condition met
+
+Checking for InvalidSpecError race condition...
+RACE CONDITION DETECTED!
+Application: race-test-app-1
+Message: Application referencing project race-test-project which does not exist
+
+This proves the race condition:
+1. AppProject 'race-test-project' exists:
+race-test-project   11m
+2. But Application got InvalidSpecError saying project doesn't exist
+3. This happens when appInformer processes apps before projInformer cache is synced
+
+RACE CONDITION DETECTED!
+Application: race-test-app-2
+Message: Application referencing project race-test-project which does not exist
+
+This proves the race condition:
+1. AppProject 'race-test-project' exists:
+race-test-project   11m
+2. But Application got InvalidSpecError saying project doesn't exist
+3. This happens when appInformer processes apps before projInformer cache is synced
+
+RACE CONDITION DETECTED!
+Application: race-test-app-3
+Message: Application referencing project race-test-project which does not exist
+
+This proves the race condition:
+1. AppProject 'race-test-project' exists:
+race-test-project   11m
+2. But Application got InvalidSpecError saying project doesn't exist
+3. This happens when appInformer processes apps before projInformer cache is synced
+
+RACE CONDITION DETECTED!
+Application: race-test-app-4
+Message: Application referencing project race-test-project which does not exist
+
+This proves the race condition:
+1. AppProject 'race-test-project' exists:
+race-test-project   11m
+2. But Application got InvalidSpecError saying project doesn't exist
+3. This happens when appInformer processes apps before projInformer cache is synced
+
+RACE CONDITION DETECTED!
+Application: race-test-app-5
+Message: Application referencing project race-test-project which does not exist
+
+This proves the race condition:
+1. AppProject 'race-test-project' exists:
+race-test-project   11m
+2. But Application got InvalidSpecError saying project doesn't exist
+3. This happens when appInformer processes apps before projInformer cache is synced
+
+
+Current Application statuses:
+  race-test-app-1: Health=Healthy Sync=Synced Conditions=[InvalidSpecError]
+  race-test-app-2: Health=Healthy Sync=OutOfSync Conditions=[InvalidSpecError SharedResourceWarning SharedResourceWarning]
+  race-test-app-3: Health=Healthy Sync=OutOfSync Conditions=[InvalidSpecError SharedResourceWarning SharedResourceWarning]
+  race-test-app-4: Health=Healthy Sync=OutOfSync Conditions=[InvalidSpecError SharedResourceWarning SharedResourceWarning]
+  race-test-app-5: Health=Healthy Sync=OutOfSync Conditions=[InvalidSpecError SharedResourceWarning SharedResourceWarning]
+
+SUCCESS: Race condition reproduced on attempt 1!
+
+To see the fix in action, apply the HasSynced() guard patch and run this script again.
+With the fix, Applications should not get InvalidSpecError for existing projects.
+Cleanup complete
