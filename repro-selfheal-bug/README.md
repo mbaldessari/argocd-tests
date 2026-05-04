@@ -2,6 +2,14 @@ ArgoCD Application with selfHeal enabled.
 Point repoURL to wherever you host the 01-app-manifests/ directory
 (a git repo, or use a local path if using argocd-server --repo-server).
 
+REPRODUCE THE BUG:
+
+`./reproduce-bug.sh`
+
+REPRODUCE THE FIX:
+
+`./reproduce-fix.sh`
+
 REPRODUCTION STEPS:
 
 1. Make sure the "transient-ns" namespace does NOT exist
