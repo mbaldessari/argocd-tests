@@ -32,27 +32,12 @@ subjects:
     name: default
     namespace: race-reproducer-extra
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: race-reproducer-slow
+  name: race-reproducer-wave1
+  namespace: race-reproducer-ns
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: race-reproducer-slow
-  template:
-    metadata:
-      labels:
-        app: race-reproducer-slow
-    spec:
-      initContainers:
-        - name: slow-init
-          image: registry.access.redhat.com/ubi9/ubi-minimal:latest
-          command: ["sh", "-c", "sleep 30"]
-      containers:
-        - name: main
-          image: registry.access.redhat.com/ubi9/ubi-minimal:latest
-          command: ["sh", "-c", "sleep infinity"]
+    argocd.argoproj.io/sync-wave: "1"
+data:
+  key: wave1-marker
