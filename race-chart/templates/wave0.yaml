@@ -36,7 +36,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: race-reproducer-slow
-  namespace: race-reproducer-ns
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
@@ -50,10 +49,10 @@ spec:
         app: race-reproducer-slow
     spec:
       initContainers:
-        - name: delay
+        - name: slow-init
           image: registry.access.redhat.com/ubi9/ubi-minimal:latest
-          command: ["sleep", "30"]
+          command: ["sh", "-c", "sleep 30"]
       containers:
-        - name: app
+        - name: main
           image: registry.access.redhat.com/ubi9/ubi-minimal:latest
-          command: ["sleep", "infinity"]
+          command: ["sh", "-c", "sleep infinity"]
