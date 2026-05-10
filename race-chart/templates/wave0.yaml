@@ -1,0 +1,33 @@
+{{- range $i := list "alpha" "bravo" "charlie" "delta" "echo" "foxtrot" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: race-reproducer-{{ $i }}
+  namespace: race-reproducer-ns
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+data:
+  key: value-{{ $i }}
+---
+{{- end }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: race-reproducer-extra
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: race-reproducer-extra-crb
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: race-reproducer-extra
