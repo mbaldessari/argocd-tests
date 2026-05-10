@@ -31,3 +31,29 @@ subjects:
   - kind: ServiceAccount
     name: default
     namespace: race-reproducer-extra
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: race-reproducer-slow
+  namespace: race-reproducer-ns
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: race-reproducer-slow
+  template:
+    metadata:
+      labels:
+        app: race-reproducer-slow
+    spec:
+      initContainers:
+        - name: delay
+          image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+          command: ["sleep", "30"]
+      containers:
+        - name: app
+          image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+          command: ["sleep", "infinity"]
